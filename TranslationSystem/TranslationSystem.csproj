@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Betalgo.OpenAI.GPT3" Version="6.6.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
   </ItemGroup>
@@ -16,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TranslationSystem.Bot\TranslationSystem.Bot.csproj" />
     <ProjectReference Include="..\TranslationSystem.Data\TranslationSystem.Data.csproj" />
+    <ProjectReference Include="..\TranslationSystem.Services\TranslationSystem.Services.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
+using OpenAI.GPT3.Extensions;
 using TranslationSystem.Data.Contexts;
 using TranslationSystem.Data.Extensions;
 
@@ -12,11 +13,16 @@ internal static class Configurations
     public static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
     {
         var mongoDb = context.Configuration.GetSection("MongoDb");
+        var openAi = context.Configuration.GetSection("OpenAi");
         //Register services here
         services.AddMongoDbContext<ApplicationContext>(options =>
         {
             options.ConnectionString = mongoDb["ConnectionString"];
             options.DatabaseName = mongoDb["DatabaseName"];
+        });
+        services.AddOpenAIService(options =>
+        {
+            options.ApiKey = openAi["ApiKey"];
         });
     }
 
