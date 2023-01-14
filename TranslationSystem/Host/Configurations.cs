@@ -5,6 +5,7 @@ using System.Reflection;
 using OpenAI.GPT3.Extensions;
 using TranslationSystem.Data.Contexts;
 using TranslationSystem.Data.Extensions;
+using TranslationSystem.Services.Extensions;
 
 namespace TranslationSystem.Host;
 
@@ -24,6 +25,7 @@ internal static class Configurations
         {
             options.ApiKey = openAi["ApiKey"];
         });
+        services.AddCustomServices();
     }
 
     public static void ConfigureConfiguration(HostBuilderContext context, IConfigurationBuilder builder)
