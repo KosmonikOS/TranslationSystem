@@ -26,6 +26,7 @@ internal static class Configurations
             options.ApiKey = openAi["ApiKey"];
         });
         services.AddCustomServices();
+        services.AddCustomRepositories();
     }
 
     public static void ConfigureConfiguration(HostBuilderContext context, IConfigurationBuilder builder)
