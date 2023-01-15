@@ -7,7 +7,7 @@ public abstract class CommandHandler
 {
     public abstract Task HandleAsync(Message message);
 
-    public T GetCommandArguments<T>(Message message)
+    public T GetModelFromArguments<T>(Message message)
     {
         var type = typeof(T);
         var dto = Activator.CreateInstance(type);
@@ -17,7 +17,7 @@ public abstract class CommandHandler
         return (T)dto;
     }
 
-    private string[] GetCommandArgumentsInternal(string command)
+    private string[] GetCommandArguments(string command)
         => command.Substring(command.IndexOf(' ') + 1).Split();
 
     private void TryAssignUserId<T>(Message message, PropertyInfo[] properties, T dto)
@@ -31,7 +31,7 @@ public abstract class CommandHandler
 
     private void TryAssignProperties<T>(Message message, PropertyInfo[] properties, T dto)
     {
-        var arguments = GetCommandArgumentsInternal(message.Text);
+        var arguments = GetCommandArguments(message.Text);
         foreach (var map in properties.Select(x => new { Property = x, Attribute = x.GetCustomAttribute<ArgumentAttribute>() }))
         {
             if (map.Attribute is null) continue;
