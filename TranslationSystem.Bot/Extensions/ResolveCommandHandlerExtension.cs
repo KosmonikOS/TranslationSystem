@@ -8,7 +8,7 @@ public static class ResolveCommandHandlerExtension
 {
     public static CommandHandler ResolveCommandHandler(this IServiceProvider provider, Message message)
     {
-        var command = message.Text.Substring(1, message.Text.IndexOf(' ') - 1);
+        var command = message.Text.Substring(1, message.Text.IndexOf(' ') > 0 ? message.Text.IndexOf(' ') - 1 : message.Text.Length - 1);
         var commands = provider.GetRequiredService<ICommandCollection>();
         var handlerType = commands.GetType(command);
         return (CommandHandler)provider.GetRequiredService(handlerType);
