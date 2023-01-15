@@ -2,9 +2,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
+using FluentValidation;
 using OpenAI.GPT3.Extensions;
+using TranslationSystem.Bot.Extensions;
 using TranslationSystem.Data.Contexts;
 using TranslationSystem.Data.Extensions;
+using TranslationSystem.Domain.Validators;
 using TranslationSystem.Services.Extensions;
 
 namespace TranslationSystem.Host;
@@ -25,8 +28,10 @@ internal static class Configurations
         {
             options.ApiKey = openAi["ApiKey"];
         });
+        services.AddTelegramCommands(Assembly.GetExecutingAssembly());
         services.AddCustomServices();
         services.AddCustomRepositories();
+        services.AddValidatorsFromAssemblyContaining<AddWordDtoValidator>();
     }
 
     public static void ConfigureConfiguration(HostBuilderContext context, IConfigurationBuilder builder)
