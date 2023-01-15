@@ -5,7 +5,7 @@ using TranslationSystem.Bot.Attributes;
 namespace TranslationSystem.Bot.Abstractions;
 public abstract class CommandHandler
 {
-    public abstract void Handle(Message message);
+    public abstract Task HandleAsync(Message message);
 
     public T GetCommandArguments<T>(Message message)
     {
