@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using TranslationSystem.Bot.Attributes;
 
 namespace TranslationSystem.Bot.Abstractions;
 public abstract class CommandHandler
 {
-    public abstract Task HandleAsync(Message message);
+    public abstract Task HandleAsync(Message message,ITelegramBotClient client,CancellationToken cancellationToken);
 
     public T GetModelFromArguments<T>(Message message)
     {

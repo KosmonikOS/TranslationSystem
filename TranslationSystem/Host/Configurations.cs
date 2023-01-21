@@ -18,6 +18,7 @@ internal static class Configurations
     {
         var mongoDb = context.Configuration.GetSection("MongoDb");
         var openAi = context.Configuration.GetSection("OpenAi");
+        var telegram = context.Configuration.GetSection("Telegram");
         //Register services here
         services.AddMongoDbContext<ApplicationContext>(options =>
         {
@@ -28,7 +29,7 @@ internal static class Configurations
         {
             options.ApiKey = openAi["ApiKey"];
         });
-        services.AddTelegramCommands(Assembly.GetExecutingAssembly());
+        services.AddTelegramClientWithCommands(telegram["ApiToken"],Assembly.GetExecutingAssembly());
         services.AddCustomServices();
         services.AddCustomRepositories();
         services.AddValidatorsFromAssemblyContaining<AddWordDtoValidator>();
