@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Threading;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using TranslationSystem.Bot.Abstractions;
@@ -10,7 +9,7 @@ namespace TranslationSystem.Bot.Implementations;
 public class TelegramBotClientWithCommands : ITelegramBotClientWithCommands
 {
     private IServiceProvider _serviceProvider;
-    private ITelegramBotClient _client;
+    private readonly ITelegramBotClient _client;
     private CancellationToken _cancellationToken;
 
     public TelegramBotClientWithCommands(ITelegramBotClient client)
@@ -35,7 +34,9 @@ public class TelegramBotClientWithCommands : ITelegramBotClientWithCommands
 
         using var scope = _serviceProvider.CreateScope();
 
-        await scope.ServiceProvider.ResolveCommandHandler(update.Message).HandleAsync(update.Message,_client,_cancellationToken);
+        var handler = scope.ServiceProvider.ResolveCommandHandler(update.Message);
+        if(handler is not null)
+            await handler.HandleAsync(update.Message,_client,_cancellationToken);
     }
     private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
