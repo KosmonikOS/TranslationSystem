@@ -19,6 +19,6 @@ public class Word
     public string Translation { get; set; }
 
     [BsonElement("user_id")]
-    public string UserId { get; set; }
+    public long UserId { get; set; }
 }
 
