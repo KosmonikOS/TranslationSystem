@@ -5,8 +5,8 @@ namespace TranslationSystem.Services.Repositories.Abstractions;
 
 public interface IWordsRepository
 {
-    public IAsyncCursor<Word> GetUserWordsAsync(string userId);
+    public IAsyncCursor<Word> GetUserWordsAsync(long userId,string? word);
     public Task AddWordAsync(Word word);
-    public Task DeleteWordAsync(string word, string userId);
+    public Task DeleteWordAsync(string word, long userId);
 }
 

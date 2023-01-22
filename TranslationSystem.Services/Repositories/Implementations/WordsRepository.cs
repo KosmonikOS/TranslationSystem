@@ -13,9 +13,11 @@ public class WordsRepository : IWordsRepository
     {
         _context = context;
     }
-    public IAsyncCursor<Word> GetUserWordsAsync(string userId)
+    public IAsyncCursor<Word> GetUserWordsAsync(long userId,string? word)
     {
         var filter = Builders<Word>.Filter.Eq(x => x.UserId, userId);
+        if (word is not null)
+            filter = filter & Builders<Word>.Filter.Eq(x => x.Content, word);
         return _context.Words.FindSync(filter);
     }
 
@@ -24,7 +26,7 @@ public class WordsRepository : IWordsRepository
         await _context.Words.InsertOneAsync(word);
     }
 
-    public async Task DeleteWordAsync(string word, string userId)
+    public async Task DeleteWordAsync(string word, long userId)
     {
         var filter = Builders<Word>.Filter.And(
             Builders<Word>.Filter.Eq(x => x.Content, word),
