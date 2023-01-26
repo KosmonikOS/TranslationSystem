@@ -13,12 +13,12 @@ public class WordsRepository : IWordsRepository
     {
         _context = context;
     }
-    public IAsyncCursor<Word> GetUserWordsAsync(long userId,string? word)
+    public IFindFluent<Word,Word> GetUserWords(long userId,string? word = null)
     {
         var filter = Builders<Word>.Filter.Eq(x => x.UserId, userId);
         if (word is not null)
             filter = filter & Builders<Word>.Filter.Eq(x => x.Content, word);
-        return _context.Words.FindSync(filter);
+        return _context.Words.Find(filter);
     }
 
     public async Task AddWordAsync(Word word)
