@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using TranslationSystem.Data.Options;
 
@@ -12,6 +13,9 @@ public static class AddMongoDbExtension
         configureDelegate(options);
         Verify(options);
         var client = new MongoClient(options.ConnectionString);
+        var isMongoAlive = client.GetDatabase(options.DatabaseName).RunCommandAsync((Command<BsonDocument>)"{ping:1}").Wait(1000);
+        if(!isMongoAlive)
+            throw new MongoException("Cannot connect to the server");
         var activation = Activator.CreateInstance(typeof(TContext), args: new object[] { client, options.DatabaseName });
         if (activation is TContext context)
             services.AddSingleton(typeof(TContext), context);
