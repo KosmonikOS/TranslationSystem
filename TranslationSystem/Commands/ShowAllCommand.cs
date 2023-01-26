@@ -1,4 +1,3 @@
-using System.Text;
 using MongoDB.Driver;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -6,6 +5,7 @@ using TranslationSystem.Bot.Abstractions;
 using TranslationSystem.Bot.Attributes;
 using TranslationSystem.Domain.Dtos;
 using TranslationSystem.Domain.Models;
+using TranslationSystem.Helpers;
 using TranslationSystem.Services.Repositories.Abstractions;
 
 namespace TranslationSystem.Commands;
@@ -29,15 +29,6 @@ public class ShowAllCommand : CommandHandler
         });
         var words = await _wordsRepository.GetUserWords(userId)
             .Project(project).ToListAsync();
-        await PrintWords(words,client,message.Chat.Id);
-    }
-
-    private async Task PrintWords(List<ShowWordDto> words,ITelegramBotClient client,ChatId chatId)
-    {
-        var sb = new StringBuilder("Список ваших слов:");
-        for(var i = 0;i < words.Count;i++){
-            sb.Append($"{i+1}{words[i].Word}({words[i].Translation})\n{words[i].Definition}\n");
-        }
-        await client.SendTextMessageAsync(chatId,sb.ToString());
+        await PrintWordsHelper.SendPrintedWordsAsync(words,client,message.Chat.Id);
     }
 }
