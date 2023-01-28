@@ -4,6 +4,7 @@ using Telegram.Bot.Types;
 using TranslationSystem.Bot.Abstractions;
 using TranslationSystem.Bot.Attributes;
 using TranslationSystem.Bot.Extensions;
+using TranslationSystem.Constants;
 using TranslationSystem.Domain.Dtos;
 using TranslationSystem.Domain.Models;
 using TranslationSystem.Services.Repositories.Abstractions;
@@ -18,7 +19,6 @@ namespace TranslationSystem.Commands
         private readonly ITranslationService _translationService;
         private readonly IDefinitionService _definitionService;
         private readonly IWordsRepository _wordsRepository;
-        private const string AddedMessage = "Слово успешно добавлено";
 
         public AddWordCommand(IValidator<AddWordDto> validator, ITranslationService translationService
             , IDefinitionService definitionService, IWordsRepository wordsRepository)
@@ -51,7 +51,7 @@ namespace TranslationSystem.Commands
 
             await _wordsRepository.AddWordAsync(word);
 
-            await client.SendTextMessageAsync(chatId, AddedMessage,cancellationToken:cancellationToken);
+            await client.SendTextMessageAsync(chatId, Messages.AddedMessage,cancellationToken:cancellationToken);
         }
     }
 }
