@@ -17,7 +17,6 @@ public class ShowWordCommand : CommandHandler
 {
     private readonly IWordsRepository _wordsRepository;
     private readonly GetWordDtoValidator _validator;
-    private const string NotFoundMessage = "Слово не найдено";
 
     public ShowWordCommand(IWordsRepository wordsRepository,GetWordDtoValidator validator)
     {
@@ -41,11 +40,6 @@ public class ShowWordCommand : CommandHandler
         });
         var words = await _wordsRepository.GetUserWords(model.UserId,model.Word)
             .Project(project).ToListAsync();
-        if(words.Count == 0)
-        {
-            await client.SendTextMessageAsync(chatId,NotFoundMessage);
-            return;
-        }
-        await PrintWordsHelper.SendPrintedWordsAsync(words,client,chatId);
+        await client.SendTextMessageAsync(message.Chat.Id,PrintWordsHelper.FormWordsListMessage(words));
     }
 }

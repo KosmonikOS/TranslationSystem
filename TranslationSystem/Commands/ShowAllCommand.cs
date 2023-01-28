@@ -29,6 +29,6 @@ public class ShowAllCommand : CommandHandler
         });
         var words = await _wordsRepository.GetUserWords(userId)
             .Project(project).ToListAsync();
-        await PrintWordsHelper.SendPrintedWordsAsync(words,client,message.Chat.Id);
+        await client.SendTextMessageAsync(message.Chat.Id,PrintWordsHelper.FormWordsListMessage(words));
     }
 }
