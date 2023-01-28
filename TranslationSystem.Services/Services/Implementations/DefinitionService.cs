@@ -28,7 +28,7 @@ public class DefinitionService : IDefinitionService
         var response = await _openAi.Completions.CreateCompletion(request, Models.TextDavinciV3);
         if (!response.Successful)
             throw new WebException(response.Error.Message);
-        return response.Choices[0].Text;
+        return response.Choices[0].Text.Substring(2); //Delete \n at the beginning of the response
     }
 }
 
