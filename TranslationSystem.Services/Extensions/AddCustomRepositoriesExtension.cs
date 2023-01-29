@@ -9,6 +9,7 @@ namespace TranslationSystem.Services.Extensions
         public static IServiceCollection AddCustomRepositories(this IServiceCollection services)
         {
             services.AddScoped<IWordsRepository, WordsRepository>();
+            services.AddScoped<IQuizRepository,QuizRepository>();
             return services;
         }
     }

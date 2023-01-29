@@ -11,5 +11,6 @@ public class ApplicationContext : MongoDbContext
     { }
 
     public IMongoCollection<Word> Words => Database.GetCollection<Word>("words");
+    public IMongoCollection<UserQuiz> UserQuiz => Database.GetCollection<UserQuiz>("user_quiz");
 }
 

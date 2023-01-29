@@ -13,12 +13,19 @@ public class WordsRepository : IWordsRepository
     {
         _context = context;
     }
+
+    public IFindFluent<Word, Word> GetWordById(string id)
+    {
+        var filter = Builders<Word>.Filter.Eq(x => x.Id,id);
+        return GetWordsInternal(filter);
+    }
+
     public IFindFluent<Word,Word> GetUserWords(long userId,string? word = null)
     {
         var filter = Builders<Word>.Filter.Eq(x => x.UserId, userId);
         if (word is not null)
             filter = filter & Builders<Word>.Filter.Eq(x => x.Content, word);
-        return _context.Words.Find(filter);
+        return GetWordsInternal(filter);
     }
 
     public async Task AddWordAsync(Word word)
@@ -33,5 +40,7 @@ public class WordsRepository : IWordsRepository
             Builders<Word>.Filter.Eq(x => x.UserId, userId));
         await _context.Words.DeleteOneAsync(filter);
     }
+
+    private IFindFluent<Word,Word> GetWordsInternal(FilterDefinition<Word> filter) => _context.Words.Find(filter);
 }
 
