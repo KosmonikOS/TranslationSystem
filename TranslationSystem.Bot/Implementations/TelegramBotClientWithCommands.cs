@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using TranslationSystem.Bot.Abstractions;
 using TranslationSystem.Bot.Extensions;
 
@@ -29,18 +30,22 @@ public class TelegramBotClientWithCommands : ITelegramBotClientWithCommands
     }
     private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        if (update.Message is not { Text: { } messageText } message)
+        if (update.Type is not (UpdateType.CallbackQuery or UpdateType.Message))
             return;
+
+        var message = update.Type is UpdateType.Message ? update.Message: update.CallbackQuery.ToMessage();
+
 
         using var scope = _serviceProvider.CreateScope();
 
-        var handler = scope.ServiceProvider.ResolveCommandHandler(update.Message);
+        var handler = scope.ServiceProvider.ResolveCommandHandler(message);
         if(handler is not null)
-            await handler.HandleAsync(update.Message,_client,_cancellationToken);
+            await handler.HandleAsync(message,_client,_cancellationToken);
     }
     private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }
+
 }
 
