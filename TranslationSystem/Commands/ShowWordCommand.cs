@@ -38,8 +38,8 @@ public class ShowWordCommand : CommandHandler
             Definition = x.Definition,
             Translation = x.Translation
         });
-        var words = await _wordsRepository.GetUserWords(model.UserId,model.Word)
-            .Project(project).ToListAsync();
-        await client.SendTextMessageAsync(message.Chat.Id,PrintWordsHelper.FormWordsListMessage(words));
+        var word = await _wordsRepository.GetUserWords(model.UserId,model.Word)
+            .Project(project).FirstOrDefaultAsync();
+        await client.SendTextMessageAsync(message.Chat.Id,PrintWordsHelper.FormWordMessage(word));
     }
 }

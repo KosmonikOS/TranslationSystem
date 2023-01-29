@@ -15,4 +15,9 @@ public static class PrintWordsHelper
         }
         return sb.ToString();
     }
+    public static string FormWordMessage(ShowWordDto? word)
+    {
+        if(word is null) return Messages.NotFoundMessage;
+        return $"{word.Word} ({word.Translation})\n{word.Definition}";
+    }
 }
