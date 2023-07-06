@@ -1,34 +1,37 @@
-﻿using OpenAI.GPT3.Interfaces;
-using OpenAI.GPT3.ObjectModels.RequestModels;
-using OpenAI.GPT3.ObjectModels;
-using System.Net;
+﻿using System.Net;
+using System.Text;
+using System.Text.Json;
+using TranslationSystem.Domain;
 using TranslationSystem.Services.Services.Abstractions;
 
-namespace TranslationSystem.Services.Services.Implementations;
+namespace TranslationSystem.Services;
 
-public class TranslationService:ITranslationService
+public class TranslationService : ITranslationService
 {
-    private readonly IOpenAIService _openAi;
+    private readonly IHttpClientFactory httpClientFactory;
 
-    public TranslationService(IOpenAIService openAi)
+    public TranslationService(IHttpClientFactory httpClientFactory)
     {
-        _openAi = openAi;
+        this.httpClientFactory = httpClientFactory;
     }
+
     public async Task<string> GetTranslationAsync(string word)
     {
-        var request = new CompletionCreateRequest()
-        {
-            Prompt = $"Translate this into Russian:{word}",
-            TopP = 1,
-            FrequencyPenalty = 0,
-            PresencePenalty = 0,
-            BestOf = 1,
-            Temperature = 0.3f
-        };
-        var response = await _openAi.Completions.CreateCompletion(request, Models.TextDavinciV3);
-        if (!response.Successful)
-            throw new WebException(response.Error.Message);
-        return response.Choices[0].Text.Substring(2); //Delete \n at the beginning of the response
+        var clinet = httpClientFactory.CreateClient("translations");
+        var content = new StringContent(@"{
+            ""text"": ""{" + word + @"}"",
+            ""source"": ""eng_Latn"",
+            ""target"": ""rus_Cyrl""
+        }", Encoding.UTF8, "application/json");
+        var response = await clinet.PostAsync("/v1/nllb-200-3-3b/translation", content);
+        if(!response.IsSuccessStatusCode)
+            throw new WebException(response.ReasonPhrase);
+        var json = await response.Content.ReadAsStringAsync();
+        var dto = JsonSerializer.Deserialize<GetWordTranslationDto>(json, new JsonSerializerOptions{
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = new SnakeCaseNamingPolicy()
+        });
+        return dto.TranslationText;
     }
-}
 
+}

@@ -19,6 +19,7 @@ internal static class Configurations
         var mongoDb = context.Configuration.GetSection("MongoDb");
         var openAi = context.Configuration.GetSection("OpenAi");
         var telegram = context.Configuration.GetSection("Telegram");
+        var nlpcloud = context.Configuration.GetSection("NLPCloud");
         //Register services here
         services.AddMongoDbContext<ApplicationContext>(options =>
         {
@@ -31,6 +32,11 @@ internal static class Configurations
         });
         services.AddHttpClient("definitions",(serviceProvider, httpClient) =>
             httpClient.BaseAddress = new Uri("https://api.dictionaryapi.dev"));
+        services.AddHttpClient("translations",httpClient =>
+        {
+            httpClient.BaseAddress = new Uri("https://api.nlpcloud.io");
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Token {nlpcloud["Token"]}");
+        });
         services.AddTelegramClientWithCommands(telegram["ApiToken"],Assembly.GetExecutingAssembly());
         services.AddCustomServices();
         services.AddCustomRepositories();
