@@ -4,12 +4,20 @@ using TranslationSystem.Host;
 
 var host = HostBuilder.BuildHost();
 
-var clinet = host.Services.GetRequiredService<ITelegramBotClientWithCommands>();
+var client = host.Services.GetRequiredService<ITelegramBotClientWithCommands>();
 
-var cancellationToken = new CancellationTokenSource();
+var cancellationTokenSource = new CancellationTokenSource();
+var cancellationToken = cancellationTokenSource.Token;
 
-await clinet.StartHandlingCommandsAsync(host.Services,cancellationToken.Token);
+var exitEvent = new ManualResetEvent(false);
 
-Console.ReadLine();
+// Capture termination signals to gracefully stop the execution
+AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
+{
+    cancellationTokenSource.Cancel();
+    exitEvent.Set();
+};
 
-cancellationToken.Cancel();
+await client.StartHandlingCommandsAsync(host.Services, cancellationToken);
+
+exitEvent.WaitOne();
