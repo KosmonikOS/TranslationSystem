@@ -1,34 +1,30 @@
 ﻿using System.Net;
-using OpenAI.GPT3.Interfaces;
-using OpenAI.GPT3.ObjectModels;
-using OpenAI.GPT3.ObjectModels.RequestModels;
+using System.Text.Json;
+using TranslationSystem.Domain;
 using TranslationSystem.Services.Services.Abstractions;
 
-namespace TranslationSystem.Services.Services.Implementations;
+namespace TranslationSystem.Services;
 
 public class DefinitionService : IDefinitionService
 {
-    private readonly IOpenAIService _openAi;
+    private readonly IHttpClientFactory httpClientFactory;
 
-    public DefinitionService(IOpenAIService openAi)
+    public DefinitionService(IHttpClientFactory httpClientFactory)
     {
-        _openAi = openAi;
+        this.httpClientFactory = httpClientFactory;
     }
+
     public async Task<string> GetDefinitionAsync(string word)
     {
-        var request = new CompletionCreateRequest()
-        {
-            Prompt = $"Give me a short definition of word: {word}, in maximum 10 words",
-            TopP = 1,
-            FrequencyPenalty = 0,
-            PresencePenalty = 0,
-            BestOf = 1,
-            Temperature = 0
-        };
-        var response = await _openAi.Completions.CreateCompletion(request, Models.TextDavinciV3);
-        if (!response.Successful)
-            throw new WebException(response.Error.Message);
-        return response.Choices[0].Text.Substring(2); //Delete \n at the beginning of the response
+        var client = httpClientFactory.CreateClient("definitions");
+        var response = await client.GetAsync($"/api/v2/entries/en/{word}");
+        if(response.StatusCode == HttpStatusCode.NotFound)
+                return "";
+        if(!response.IsSuccessStatusCode)     
+            throw new WebException(response.ReasonPhrase);
+        var json = await response.Content.ReadAsStringAsync();
+        var words = JsonSerializer.Deserialize<GetWordDefinitionDto[]>(json
+            , new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
+        return words[0].Meanings[0].Definitions[0].Definition;
     }
 }
-

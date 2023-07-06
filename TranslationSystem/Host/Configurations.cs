@@ -29,6 +29,8 @@ internal static class Configurations
         {
             options.ApiKey = openAi["ApiKey"];
         });
+        services.AddHttpClient("definitions",(serviceProvider, httpClient) =>
+            httpClient.BaseAddress = new Uri("https://api.dictionaryapi.dev"));
         services.AddTelegramClientWithCommands(telegram["ApiToken"],Assembly.GetExecutingAssembly());
         services.AddCustomServices();
         services.AddCustomRepositories();
