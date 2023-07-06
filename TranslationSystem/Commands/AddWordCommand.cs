@@ -7,6 +7,7 @@ using TranslationSystem.Bot.Extensions;
 using TranslationSystem.Constants;
 using TranslationSystem.Domain.Dtos;
 using TranslationSystem.Domain.Models;
+using TranslationSystem.Helpers;
 using TranslationSystem.Services.Repositories.Abstractions;
 using TranslationSystem.Services.Services.Abstractions;
 
@@ -51,7 +52,12 @@ namespace TranslationSystem.Commands
 
             await _wordsRepository.AddWordAsync(word);
 
-            await client.SendTextMessageAsync(chatId, Messages.AddedMessage,cancellationToken:cancellationToken);
+            await client.SendTextMessageAsync(chatId, Messages.AddedMessage 
+                + PrintWordsHelper.FormWordMessage(new ShowWordDto{
+                    Word = model.Word,
+                    Translation = translation,
+                    Definition = definition
+                }),cancellationToken:cancellationToken);
         }
     }
 }

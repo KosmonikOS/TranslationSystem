@@ -8,8 +8,8 @@ public static class Messages
                                         "2. /showall - показать все доступные слова\n" +
                                         "3. /show (Желаемое слово) - показать конкретное слово\n" +
                                         "4. /next - войти в режим викторины\n";
-    public const string AddedMessage = "Слово успешно добавлено";
-    public const string NotFoundMessage = "Слово не найдено";
-    public const string NoWordsAddedMessage = "Невозможно войти в режим викторины. Сначала добавьте слова";
-    public const string UnknownErrorMessage = "Что-то пошло не так";
+    public const string AddedMessage = "Слово успешно добавлено\n";
+    public const string NotFoundMessage = "Слово не найдено\n";
+    public const string NoWordsAddedMessage = "Невозможно войти в режим викторины. Сначала добавьте слова\n";
+    public const string UnknownErrorMessage = "Что-то пошло не так\n";
 }
