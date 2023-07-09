@@ -10,7 +10,6 @@ using TranslationSystem.Data.Extensions;
 using TranslationSystem.Domain.Validators;
 using TranslationSystem.Services.Extensions;
 using Microsoft.Extensions.Logging;
-using Karambolo.Extensions.Logging.File;
 
 namespace TranslationSystem.Host;
 
@@ -50,6 +49,12 @@ internal static class Configurations
         //Add configuration sources here
         builder.AddJsonFile("configuration.json", true)
             .AddUserSecrets(Assembly.GetExecutingAssembly());
+    }
+
+    public static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
+    {
+        builder.ClearProviders();
+        builder.AddConsole();        
     }
 
     public static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
