@@ -46,7 +46,7 @@ internal static class Configurations
     public static void ConfigureConfiguration(HostBuilderContext context, IConfigurationBuilder builder)
     {
         //Add configuration sources here
-        builder.AddUserSecrets(Assembly.GetExecutingAssembly())
-            .AddJsonFile("configuration.json", true);
+        builder.AddJsonFile("configuration.json", true)
+            .AddUserSecrets(Assembly.GetExecutingAssembly());
     }
 }
