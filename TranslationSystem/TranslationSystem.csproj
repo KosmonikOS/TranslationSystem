@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,19 +6,17 @@
     <Nullable>enable</Nullable>
     <UserSecretsId>86c8e130-eba6-41ad-9e7d-25b5a6768028</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Betalgo.OpenAI.GPT3" Version="6.6.3" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
-    <PackageReference Include="Telegram.Bot" Version="18.0.0" />
+    <PackageReference Include="Betalgo.OpenAI.GPT3" Version="6.6.3"/>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0"/>
+    <PackageReference Include="Telegram.Bot" Version="18.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0"/>
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\TranslationSystem.Bot\TranslationSystem.Bot.csproj" />
-    <ProjectReference Include="..\TranslationSystem.Data\TranslationSystem.Data.csproj" />
-    <ProjectReference Include="..\TranslationSystem.Services\TranslationSystem.Services.csproj" />
+    <ProjectReference Include="..\TranslationSystem.Bot\TranslationSystem.Bot.csproj"/>
+    <ProjectReference Include="..\TranslationSystem.Data\TranslationSystem.Data.csproj"/>
+    <ProjectReference Include="..\TranslationSystem.Services\TranslationSystem.Services.csproj"/>
   </ItemGroup>
-
 </Project>
