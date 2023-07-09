@@ -56,10 +56,4 @@ internal static class Configurations
         builder.ClearProviders();
         builder.AddConsole();        
     }
-
-    public static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
-    {
-        builder.ClearProviders();
-        builder.AddConsole();        
-    }
 }
