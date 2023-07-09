@@ -8,7 +8,8 @@ public static class Messages
                                         "2. /showall - показать все доступные слова\n" +
                                         "3. /show (Желаемое слово) - показать конкретное слово\n" +
                                         "4. /next - войти в режим викторины\n" +
-                                        "5. /exportall - Экспортировать все слова в CSV формате\n";
+                                        "5. /exportall - Экспортировать все слова в CSV формате\n" +
+                                        "6. /exportnew - Экспортировать новые слова в CSV формате\n";
     public const string AddedMessage = "Слово успешно добавлено\n";
     public const string NotFoundMessage = "Слово не найдено\n";
     public const string NoWordsAddedMessage = "Невозможно войти в режим викторины. Сначала добавьте слова\n";

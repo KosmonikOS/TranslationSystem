@@ -20,5 +20,8 @@ public class Word
 
     [BsonElement("user_id")]
     public long UserId { get; set; }
+    [BsonElement("is_already_exported")]
+    public bool IsAlreadyExported { get; set; }
+    
 }
 

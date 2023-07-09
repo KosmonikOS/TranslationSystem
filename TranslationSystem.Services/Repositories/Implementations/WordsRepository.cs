@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using TranslationSystem.Data.Contexts;
+using TranslationSystem.Domain.Dtos;
 using TranslationSystem.Domain.Models;
 using TranslationSystem.Services.Repositories.Abstractions;
 
@@ -24,21 +25,42 @@ public class WordsRepository : IWordsRepository
     {
         var filter = Builders<Word>.Filter.Eq(x => x.UserId, userId);
         if (word is not null)
-            filter = filter & Builders<Word>.Filter.Eq(x => x.Content, word);
+            filter &= Builders<Word>.Filter.Eq(x => x.Content, word);
         return GetWordsInternal(filter);
     }
 
-    public async Task AddWordAsync(Word word)
+    public async Task<List<T>> GetAndMarkUserNewWordsAsync<T>(long userId
+        ,ProjectionDefinition<Word,T> project)
     {
-        await _context.Words.InsertOneAsync(word);
+        using var session = await _context.CreateSessionAsync();
+        try
+        {
+            session.StartTransaction();
+            var filter = Builders<Word>.Filter.Eq(x => x.UserId, userId) 
+            & Builders<Word>.Filter.Where(x => !x.IsAlreadyExported);
+            var words = await GetWordsInternal(filter).Project(project).ToListAsync();
+            var update = Builders<Word>.Update.Set(x => x.IsAlreadyExported,true);
+            await _context.Words.UpdateManyAsync(filter, update);
+            await session.CommitTransactionAsync();
+            return words;
+        }
+        catch (MongoException)
+        {
+            await session.AbortTransactionAsync();
+            throw;
+        }
     }
 
-    public async Task DeleteWordAsync(string word, long userId)
+    public Task AddWordAsync(Word word)
     {
-        var filter = Builders<Word>.Filter.And(
-            Builders<Word>.Filter.Eq(x => x.Content, word),
-            Builders<Word>.Filter.Eq(x => x.UserId, userId));
-        await _context.Words.DeleteOneAsync(filter);
+         return _context.Words.InsertOneAsync(word);
+    }
+
+    public Task DeleteWordAsync(string word, long userId)
+    {
+        var filter = Builders<Word>.Filter.Eq(x => x.Content, word) 
+        & Builders<Word>.Filter.Eq(x => x.UserId, userId);
+        return _context.Words.DeleteOneAsync(filter);
     }
 
     private IFindFluent<Word,Word> GetWordsInternal(FilterDefinition<Word> filter) => _context.Words.Find(filter);
