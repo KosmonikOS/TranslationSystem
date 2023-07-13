@@ -9,7 +9,7 @@ public static class FormatWordsHelper
     {
         var sb = new StringBuilder("Список слов для экспорта:\n");
         for(var i = 0;i < words.Count;i++){
-            sb.Append($"{words[i].Word},({words[i].Translation}) {words[i].Definition}\n");
+            sb.Append($"{words[i].Word}, {words[i].Translation} {words[i].Definition}\n");
         }
         return sb.ToString();
     }
