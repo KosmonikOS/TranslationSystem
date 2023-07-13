@@ -18,6 +18,6 @@ public static class PrintWordsHelper
     public static string FormWordMessage(ShowWordDto? word)
     {
         if(word is null) return Messages.NotFoundMessage;
-        return $"{word.Word} ({word.Translation})\n{word.Definition}";
+        return $"{word.Word} {word.Translation} \n{word.Definition}";
     }
 }
