@@ -17,15 +17,13 @@ namespace TranslationSystem.Commands
     public class AddWordCommand : CommandHandler
     {
         private readonly IValidator<AddWordDto> _validator;
-        private readonly ITranslationService _translationService;
         private readonly IDefinitionService _definitionService;
         private readonly IWordsRepository _wordsRepository;
 
-        public AddWordCommand(IValidator<AddWordDto> validator, ITranslationService translationService
+        public AddWordCommand(IValidator<AddWordDto> validator
             , IDefinitionService definitionService, IWordsRepository wordsRepository)
         {
             _validator = validator;
-            _translationService = translationService;
             _definitionService = definitionService;
             _wordsRepository = wordsRepository;
         }
@@ -41,12 +39,11 @@ namespace TranslationSystem.Commands
             }
 
             var definition = await _definitionService.GetDefinitionAsync(model.Word);
-            var translation = await _translationService.GetTranslationAsync(model.Word);
             var word = new Word()
             {
                 Content = model.Word,
                 Definition = definition,
-                Translation = translation,
+                Translation = "",
                 UserId = model.UserId
             };
 
@@ -55,7 +52,7 @@ namespace TranslationSystem.Commands
             await client.SendTextMessageAsync(chatId, Messages.AddedMessage 
                 + PrintWordsHelper.FormWordMessage(new ShowWordDto{
                     Word = model.Word,
-                    Translation = translation,
+                    Translation = "",
                     Definition = definition
                 }),cancellationToken:cancellationToken);
         }
