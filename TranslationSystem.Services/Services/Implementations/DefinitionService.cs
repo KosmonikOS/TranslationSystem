@@ -1,30 +1,33 @@
 ﻿using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using TranslationSystem.Domain;
+using TranslationSystem.Domain.Models;
 using TranslationSystem.Services.Services.Abstractions;
 
 namespace TranslationSystem.Services;
 
 public class DefinitionService : IDefinitionService
 {
-    private readonly IHttpClientFactory httpClientFactory;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly MerriamWebsterApi _merriamWebsterApi;
 
-    public DefinitionService(IHttpClientFactory httpClientFactory)
+    public DefinitionService(IHttpClientFactory httpClientFactory
+        ,IOptions<MerriamWebsterApi> options)
     {
-        this.httpClientFactory = httpClientFactory;
+        _httpClientFactory = httpClientFactory;
+        _merriamWebsterApi = options.Value;
     }
 
     public async Task<string> GetDefinitionAsync(string word)
     {
-        var client = httpClientFactory.CreateClient("definitions");
-        var response = await client.GetAsync($"/api/v2/entries/en/{word}");
-        if(response.StatusCode == HttpStatusCode.NotFound)
-                return "";
-        if(!response.IsSuccessStatusCode)     
+        var client = _httpClientFactory.CreateClient("definitions");
+        var response = await client.GetAsync($"/api/v3/references/thesaurus/json/{word}?key={_merriamWebsterApi.ApiKey}");
+        if(!response.IsSuccessStatusCode)
             throw new WebException(response.ReasonPhrase);
         var json = await response.Content.ReadAsStringAsync();
         var words = JsonSerializer.Deserialize<GetWordDefinitionDto[]>(json
             , new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
-        return words[0].Meanings[0].Definitions[0].Definition;
+        return words.Length != 0 ? string.Join("; ",words.SelectMany(x => x.ShortDef)): "";
     }
 }

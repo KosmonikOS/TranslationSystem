@@ -10,6 +10,7 @@ using TranslationSystem.Data.Extensions;
 using TranslationSystem.Domain.Validators;
 using TranslationSystem.Services.Extensions;
 using Microsoft.Extensions.Logging;
+using TranslationSystem.Domain.Models;
 
 namespace TranslationSystem.Host;
 
@@ -21,6 +22,9 @@ internal static class Configurations
         var openAi = context.Configuration.GetSection("OpenAi");
         var telegram = context.Configuration.GetSection("Telegram");
         var nlpcloud = context.Configuration.GetSection("NLPCloud");
+        var merriamWebster = context.Configuration.GetSection("MerriamWebster");
+        //Register options
+        services.Configure<MerriamWebsterApi>(merriamWebster);
         //Register services here
         services.AddMongoDbContext<ApplicationContext>(options =>
         {
@@ -32,7 +36,7 @@ internal static class Configurations
             options.ApiKey = openAi["ApiKey"];
         });
         services.AddHttpClient("definitions",(serviceProvider, httpClient) =>
-            httpClient.BaseAddress = new Uri("https://api.dictionaryapi.dev"));
+            httpClient.BaseAddress = new Uri("https://dictionaryapi.com"));
         services.AddHttpClient("translations",httpClient =>
         {
             httpClient.BaseAddress = new Uri("https://api.nlpcloud.io");
