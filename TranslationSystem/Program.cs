@@ -9,15 +9,15 @@ var client = host.Services.GetRequiredService<ITelegramBotClientWithCommands>();
 var cancellationTokenSource = new CancellationTokenSource();
 var cancellationToken = cancellationTokenSource.Token;
 
-var exitEvent = new ManualResetEvent(false);
+var tcs = new TaskCompletionSource();
 
 // Capture termination signals to gracefully stop the execution
 AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
 {
     cancellationTokenSource.Cancel();
-    exitEvent.Set();
+    tcs.SetResult();
 };
 
 await client.StartHandlingCommandsAsync(host.Services, cancellationToken);
 
-exitEvent.WaitOne();
+await tcs.Task;
