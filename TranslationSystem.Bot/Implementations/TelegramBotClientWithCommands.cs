@@ -14,31 +14,34 @@ public class TelegramBotClientWithCommands : ITelegramBotClientWithCommands
     private readonly ITelegramBotClient _client;
     private ILogger<ITelegramBotClientWithCommands> _logger;
     private CancellationToken _cancellationToken;
+    private string? _errorMessage;
 
     public TelegramBotClientWithCommands(ITelegramBotClient client)
     {
         _client = client;
     }
 
-    public async Task StartHandlingCommandsAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    public async Task StartHandlingCommandsAsync(IServiceProvider serviceProvider
+    , CancellationToken cancellationToken, string? errorMessage)
     {
         _serviceProvider = serviceProvider;
         _cancellationToken = cancellationToken;
+        _errorMessage = errorMessage;
         _logger = serviceProvider.GetRequiredService<ILogger<TelegramBotClientWithCommands>>();
         await _client.DeleteWebhookAsync(cancellationToken: _cancellationToken);
         _client.StartReceiving(
             updateHandler: HandleUpdateAsync,
-            pollingErrorHandler: HandleErrorAsync,
+            pollingErrorHandler: HandleError,
             cancellationToken: _cancellationToken);
     }
-    private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+    private async Task HandleUpdateAsync(ITelegramBotClient botClient
+    , Update update, CancellationToken cancellationToken)
     {
+        var message = update.Type is UpdateType.Message ? update.Message: update.CallbackQuery.ToMessage();
         try
         {
         if (update.Type is not (UpdateType.CallbackQuery or UpdateType.Message))
             return;
-
-        var message = update.Type is UpdateType.Message ? update.Message: update.CallbackQuery.ToMessage();
 
         using var scope = _serviceProvider.CreateScope();
 
@@ -48,13 +51,24 @@ public class TelegramBotClientWithCommands : ITelegramBotClientWithCommands
         }
         catch(Exception ex)
         {
-            await HandleErrorAsync(_client,ex,cancellationToken);
+            var task = SendErrorMessageToUserAsync(message,_client,cancellationToken);
+            await HandleError(_client,ex,cancellationToken);
+            await task;
         }
     }
-    private Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+    private Task HandleError(ITelegramBotClient botClient
+    , Exception exception, CancellationToken cancellationToken)
     {
         _logger.LogError(exception.ToString());
         return Task.CompletedTask;
+    }
+    private async Task SendErrorMessageToUserAsync(Message message
+    , ITelegramBotClient botClient,CancellationToken cancellationToken)
+    {
+        if(string.IsNullOrEmpty(_errorMessage))
+            return;
+        await botClient.SendTextMessageAsync(message.Chat.Id,_errorMessage
+                                    , cancellationToken: cancellationToken);
     }
 }
 

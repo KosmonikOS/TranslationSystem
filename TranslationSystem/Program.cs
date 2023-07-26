@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TranslationSystem.Bot.Abstractions;
+using TranslationSystem.Constants;
 using TranslationSystem.Host;
 
 var host = HostBuilder.BuildHost();
@@ -18,6 +19,7 @@ AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
     tcs.SetResult();
 };
 
-await client.StartHandlingCommandsAsync(host.Services, cancellationToken);
+await client.StartHandlingCommandsAsync(host.Services
+    , cancellationToken,Messages.UnknownErrorMessage);
 
 await tcs.Task;

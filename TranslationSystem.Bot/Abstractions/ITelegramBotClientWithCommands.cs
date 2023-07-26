@@ -2,6 +2,6 @@
 
 public interface ITelegramBotClientWithCommands
 {
-    public Task StartHandlingCommandsAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken);
+    public Task StartHandlingCommandsAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken,string? errorMessage);
 }
 
